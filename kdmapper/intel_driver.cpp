@@ -175,7 +175,7 @@ bool intel_driver::ClearWdFilterDriverList(HANDLE device_handle) {
 		48 8B 0D FC AA FA FF          mov     rcx, cs:qword_1C0021BF0
 		E9 21 FF FF FF                jmp     loc_1C007701A
 	*/
-	auto MpFreeDriverInfoExRef = FindPatternInSectionAtKernel(device_handle, "PAGE", WdFilter, (PUCHAR)"\x49\x8B\xC9\x00\x89\x00\x08\xE8\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xE9", "xxx?x?xx???????????x");
+	auto MpFreeDriverInfoExRef = FindPatternInSectionAtKernel(device_handle, "PAGE", WdFilter, (PUCHAR)"\x89\x00\x08\xE8\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xE9", "x?xx???????????x");
 	if (!MpFreeDriverInfoExRef) {
 		// 24010 
 		/*
@@ -185,7 +185,7 @@ bool intel_driver::ClearWdFilterDriverList(HANDLE device_handle) {
 			48 8B 0D 44 41 FA FF          mov     rcx, cs:qword_1C0023B90
 			E9 39 FF FF FF                jmp     loc_1C007F98A
 		*/
-		MpFreeDriverInfoExRef = FindPatternInSectionAtKernel(device_handle, "PAGE", WdFilter, (PUCHAR)"\x48\x89\x4A\x00\x49\x8b\x00\xE8\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xE9", "xxx?xx?x???????????x");
+		MpFreeDriverInfoExRef = FindPatternInSectionAtKernel(device_handle, "PAGE", WdFilter, (PUCHAR)"\x89\x00\x08\x00\x00\x00\xE8\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xE9", "x?x???x???????????x");
 		if (!MpFreeDriverInfoExRef) {
 			Log("[!] Failed to find WdFilter MpFreeDriverInfoEx" << std::endl);
 			return false;
@@ -196,7 +196,7 @@ bool intel_driver::ClearWdFilterDriverList(HANDLE device_handle) {
 
 	}
 
-	MpFreeDriverInfoExRef += 0x7; // skip until call instruction
+	MpFreeDriverInfoExRef += 0x3; // skip until call instruction
 
 	RuntimeDriversList = (uintptr_t)ResolveRelativeAddress(device_handle, (PVOID)RuntimeDriversList, 3, 7);
 	uintptr_t RuntimeDriversList_Head = RuntimeDriversList - 0x8;
